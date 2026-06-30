@@ -1,0 +1,20 @@
+# Shadow Sentry environment configuration
+# Copy this file's values into your real .env (this file IS your .env — just fill in the key).
+
+# --- Groq API ---
+# Get a free key at https://console.groq.com/keys
+SHADOW_GROQ_API_KEY=your_groq_api_key_here
+
+# Model used for the main chat completion. Pick one and uncomment/edit:
+#   llama-3.1-8b-instant     -> fastest, cheapest, good for demos
+#   llama-3.3-70b-versatile  -> smarter, slower, more expensive
+SHADOW_GROQ_MODEL=llama-3.1-8b-instant
+
+# Model used for the Day-2 safety/guard classifier (can be the same or different)
+SHADOW_GROQ_GUARD_MODEL=llama-3.1-8b-instant
+
+# --- Database ---
+SHADOW_DATABASE_URL=sqlite:///./shadow_sentry.db
+
+# --- App ---
+SHADOW_DEBUG=true
