@@ -35,14 +35,13 @@ class Settings(BaseSettings):
     weight_llama_guard_unsafe: int = 50
     weight_injection_pattern: int = 35
     weight_pii_present: int = 25
-    weight_document_injection: int = 45
+    weight_document_injection: int = 80
 
     # --- Risk level thresholds ---
     threshold_low_max: int = 24       # 0-24   -> LOW
     threshold_medium_max: int = 59    # 25-59  -> MEDIUM
-    threshold_high_max: int = 84      # 60-84  -> HIGH
-    # 85-100 -> BLOCKED (also blocked if explicit hard-block rule fires)
-    block_threshold: int = 85
+    threshold_high_max: int = 74      # 60-74  -> HIGH
+    block_threshold: int = 75         # 75+    -> BLOCKED
 
     # --- Rate limiting ---
     rate_limit_per_minute: int = 20

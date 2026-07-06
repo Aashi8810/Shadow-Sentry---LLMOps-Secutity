@@ -3,20 +3,25 @@ Library of known malicious payloads and prompt injection markers.
 """
 import re
 
-# Common phrases used to override system instructions
 JAILBREAK_PHRASES = [
-    r"ignore previous instructions",
-    r"ignore all prior instructions",
-    r"you are now DAN",
-    r"developer mode",
-    r"pretend you have no restrictions",
-    r"ignore your system prompt",
-    r"system prompt verbatim",
-    r"bypassing your core directives",
-    r"disregard previous instructions"
+    # Captures "ignore instructions", "ignore all previous instructions", "ignore prior instructions"
+    r"ignore.*\binstructions\b",
+    r"disregard.*\binstructions\b",
+    r"bypass.*\brestrictions\b",
+    r"clear.*\binstructions\b",
+    
+    # Common Jailbreak Persona Initializations
+    r"\byou\b.*are.*\bnow\b.*dan\b",
+    r"\bdeveloper\b.*\bmode\b",
+    r"pretend.*\bno\b.*\brestrictions\b",
+    
+    # Prompt Leaking Targets
+    r"system.*\bprompt\b.*\bverbatim\b",
+    r"system.*\binstructions\b.*\bverbatim\b",
+    r"repeat.*\bwords\b.*\babove\b",
+    r"output.*\binitial\b.*\binstructions\b"
 ]
 
-# Compile once at startup for speed
 COMPILED_JAILBREAKS = [
     re.compile(pattern, re.IGNORECASE) for pattern in JAILBREAK_PHRASES
 ]

@@ -9,31 +9,33 @@ logger = logging.getLogger(__name__)
 
 async def check_prompt_safety(prompt: str) -> tuple[bool, str]:
     """
-    Calls Llama Guard to classify the prompt.
-    Returns (is_unsafe: bool, reason: str)
+    Calls Llama Guard 3 to classify the prompt, using formal structural framing.
     """
     if not settings.enable_llama_guard:
         return False, ""
 
+    # Wrap the untrusted input within official Meta structural tags
+    # This signals to the guard model exactly where the untrusted user boundary is
+    formatted_guard_prompt = f"""<BEGIN CONVERSATION>
+User: {prompt}
+<END CONVERSATION>"""
+
     try:
-        # We pass the user's prompt directly to the guard model.
-        # Ensure SHADOW_GROQ_GUARD_MODEL is set to "llama-guard-3-8b" in your .env
         guard_response = await generate(
-            prompt=prompt,
+            prompt=formatted_guard_prompt,
             model=settings.groq_guard_model
         )
         
-        # Llama Guard typically outputs "safe" or "unsafe\n<Category>"
         result_text = guard_response.strip().lower()
         
-        if result_text.startswith("unsafe"):
+        # If Llama Guard flags it as unsafe
+        if "unsafe" in result_text:
             parts = result_text.split("\n")
-            category = parts[1].strip() if len(parts) > 1 else "unknown_category"
+            category = parts[1].strip() if len(parts) > 1 else "prompt_attack"
             return True, f"llama_guard_flag: {category}"
             
         return False, ""
         
     except LLMClientError as e:
         logger.error(f"Llama Guard check failed: {e}")
-        # In a real system, you might fail closed. For demo stability, we fail open.
         return False, "llama_guard_error: service_unavailable"

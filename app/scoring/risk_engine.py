@@ -12,18 +12,17 @@ def evaluate_risk(regex_count: int, guard_triggered: bool, doc_injection_trigger
     if pii_found:
         score += settings.weight_pii_present
 
-    # Clamp upper boundary
     score = min(score, 100)
-    
-    # Determine risk thresholds
     blocked = score >= settings.block_threshold
+    
+    # Clean step-down classification checks
     if blocked:
         level = "BLOCKED"
-    elif score > settings.threshold_high_max:
+    elif score > settings.threshold_medium_max:  # Greater than 59 (60-74)
         level = "HIGH"
-    elif score > settings.threshold_medium_max:
+    elif score > settings.threshold_low_max:     # Greater than 24 (25-59)
         level = "MEDIUM"
-    else:
+    else:                                        # 0-24
         level = "LOW"
         
     return score, level, blocked
